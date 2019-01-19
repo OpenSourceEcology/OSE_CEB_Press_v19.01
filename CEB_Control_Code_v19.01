@@ -1,19 +1,21 @@
 /* Open Source Ecology CEB Press v19.01 with Arduino Uno or Mega as controller of choice.
-CC-BY-SA, GPLv3, and OSE License for Distributive Economics
+ CC-BY-SA, GPLv3, and OSE License for Distributive Economics
  Use Mega to keep consistency with OSE D3D 3D Printer to minimize GVCS part count.
  Switches FET's HIGH/LOW to control two hydraulic solenoids,
  measures piston motion time relative to pressure sensor trigger,
  and repeats cycle while auto calibrating timing from previous cycles and startup positions.
  
- Extension time is measured. No timing compensation is necessary for compression chamber closure.
+ Extension time is measured. Orientation of machine is such that cylinder retracts to the right. 
+ See sequence at http://bit.ly/2Hnuk6F
  
- Faults should be self-resolving based on pressing sequence. See sequence:
+ Faults should be self-resolving based on pressing sequence: pressure trigger reverses direction 
+ at fault point and no block results. There is one likely place for faults to occur: soil load into chamber.
+
+ Uses HiLetgo Relay Shield 5V 4 Channel for Arduino:
  
- https://docs.google.com/presentation/d/1YLo7e6RW4SUq7v5NFQ2WoX2ZFHsnoa3wI9m8Oc5-24g/edit#slide=id.g4d84192e63_0_0
+ https://www.amazon.com/HiLetgo-Relay-Shield-Channel-Arduino/dp/B07F7Y55Z7/ref=sr_1_2?ie=UTF8&qid=1547696929&sr=8-2&keywords=hiletgo+relay+shield
  
- Uses HiLetgo Relay Shield 5V 4 Channel for Arduino.
- 
- Relay shield - https://www.amazon.com/HiLetgo-Relay-Shield-Channel-Arduino/dp/B07F7Y55Z7/ref=sr_1_2?ie=UTF8&qid=1547696929&sr=8-2&keywords=hiletgo+relay+shield
+ Note pins must be trimmed flat under Relay 1 connector and must be insulated to prevent shorts.
  
  Relay 1 is controlled by digital pin 7
  Relay 2 is controlled by digital pin 6
@@ -46,13 +48,13 @@ CC-BY-SA, GPLv3, and OSE License for Distributive Economics
 #define SELECTOR_3QUARTER 9   //Secondary cylinder timing is measured only.
 #define SELECTOR_FULL 8       //Primary cylinder thickness setting is based on secondary cylinder motion.
  
-#define PRESSURE_SENSOR_DEBOUNCE 20 //milliseconds to delay for pressure sensor debounce
-#define DELAY 500  // 1/2 sec extra to compress brick via main Cyl (default 500ms)
-#define K_A_DRAWER 0.84 // T_c = T_e * (k_A)  for 2.5in x 14in cylinder  (default 0.008)
+#define PRESSURE_SENSOR_DEBOUNCE 20   //milliseconds to delay for pressure sensor debounce
+#define DELAY 500                     // 1/2 sec extra to compress brick via main Cyl (default 500ms)
+#define K_A_DRAWER 0.84               // T_c = T_e * (k_A)  for 2.5in x 14in cylinder  (default 0.008)
 
-// custom structures, function declarations or prototypes
-bool lowPressure();    //function to read if pressure sensor is HIGH
-unsigned long drawerExtTime = 0;
+bool lowPressure();                   //function to read if pressure sensor is HIGH
+unsigned long drawerExtTime = 0;      //Time measurement for calibrating motion.
+unsigned long previousMillis = 0;     //time measurement for expansion
 
 void setup() {
 
@@ -71,22 +73,36 @@ void setup() {
 
 void loop() {
 
-  unsigned long previousMillis = 0;
+  //Step 1 Reset - moves drawer cylinder right + main cylinder up. See brick pressing sequence at http://bit.ly/2Hnuk6F
+ 
 
-  //Step 1 Calibration Extend drawer Cylinder Fully T_ext is measure
-  previousMillis = millis();
+  
   while (lowPressure() == true) {
 
+    digitalWrite(SOLENOID_RIGHT, HIGH);
+  }
+  digitalWrite(SOLENOID_RIGHT, LOW);
+  
+
+   while (lowPressure() == true) {
+
+    digitalWrite(SOLENOID_UP, HIGH);
+  }
+  digitalWrite(SOLENOID_RIGHT, LOW);
+  
+
+  
+
+
+
+  //Step 2 Soil Loading/Brick Ejection + Calibration
+         previousMillis = millis();
+  while (lowPressure() == true) {
     digitalWrite(SOLENOID_LEFT, HIGH);
   }
   digitalWrite(SOLENOID_LEFT, LOW);
-  drawerExtTime = millis() - previousMillis;
+         drawerExtTime = millis() - previousMillis;
 
-  //Step 2 Main Cyl moves down to allow soil loading
-  while (lowPressure() == true) {
-    digitalWrite(SOLENOID_DOWN, HIGH);
-  }
-  digitalWrite(SOLENOID_DOWN, LOW);
 
   //Step 3 Contract drawer cylinder half way to close compression chamber
   previousMillis = millis();
@@ -133,6 +149,63 @@ bool lowPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(PRESSURE_SENSOR) == HIGH) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  else {
+    return true;
+  }
+  
+  //reads selector - SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
+bool SELECTOR_RESET() {
+  if (digitalRead(SELECTOR_RESET) == HIGH) {
+    delay(PRESSURE_SENSOR_DEBOUNCE);
+    if (digitalRead(SELECTOR_RESET) == HIGH) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  else {
+    return true;
+  }
+  
+  bool SELECTOR_QUARTER() {
+  if (digitalRead(SELECTOR_QUARTER) == HIGH) {
+    delay(PRESSURE_SENSOR_DEBOUNCE);
+    if (digitalRead(SELECTOR_QUARTER) == HIGH) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  else {
+    return true;
+  }
+  
+  bool SELECTOR_HALF() {
+  if (digitalRead(SELECTOR_HALF) == HIGH) {
+    delay(PRESSURE_SENSOR_DEBOUNCE);
+    if (digitalRead(SELECTOR_HALF) == HIGH) {
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+  else {
+    return true;
+  }
+  
+  bool SELECTOR_3QUARTER() {
+  if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
+    delay(PRESSURE_SENSOR_DEBOUNCE);
+    if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
       return false;
     }
     else {
