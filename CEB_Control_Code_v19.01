@@ -39,13 +39,19 @@
 
 #define SOLENOID_UP 4      //Extension. See pin mapping above.
 #define SOLENOID_DOWN 5    //swap these pin numbers for wire inversion  
-
 #define SOLENOID_LEFT 6    //Extension.
 #define SOLENOID_RIGHT 7   //swap these pin numbers for wire inversion     
 
-    
+#define PRESSURE_SENSOR 13  //Needs pins adjacent to get 8-pin dupont housing for bothselector and sensor
+#define SELECTOR_RESET 12   //Second 8-pin Dupont housing for the solenoids
+#define SELECTOR_RESET 11   // 
+#define SELECTOR_RESET 10   // 
+#define SELECTOR_RESET 9    // 
+#define SELECTOR_RESET 8    // 
 
-#define PRESSURE_SENSOR 41  //labeled A3 or F3 silkscreen on the PCB
+
+#define  
+ 
 #define PRESSURE_SENSOR_DEBOUNCE 20 //milliseconds to delay for pressure sensor debounce
 #define DELAY 500  // 1/2 sec extra to compress brick via main Cyl (default 500ms)
 #define K_A_DRAWER 0.84 // T_c = T_e * (k_A)  for 2.5in x 14in cylinder  (default 0.008)
@@ -56,7 +62,8 @@ unsigned long drawerExtTime = 0;
 
 void setup() {
 
-  //initialize pin I/O Inputs use internal resistor pullups where needed and outputs get set low to prevent glitches while booting
+  //initialize pin I/O Inputs use internal resistor pullups where needed and outputs get set low 
+  //to prevent glitches while booting
   pinMode(SOLENOID_RIGHT, OUTPUT);
   digitalWrite(SOLENOID_RIGHT, LOW);
   pinMode(SOLENOID_LEFT, OUTPUT);
@@ -68,21 +75,10 @@ void setup() {
   pinMode(PRESSURE_SENSOR, INPUT);
   digitalWrite(PRESSURE_SENSOR, INPUT_PULLUP);
 
-  //Initialize  to start position retract main cyl for 0.5 sec to release pressue contract drawer cylinder fully
-  digitalWrite(SOLENOID_DOWN, HIGH);
-  delay(DELAY);
-  digitalWrite(SOLENOID_DOWN, LOW);
-  while (lowPressure() == true) {
-    digitalWrite(SOLENOID_RIGHT, HIGH);
-  }
-//  digitalWrite(SOLENOID_RIGHT, LOW);// check this - but - pressure may still be high; depends on solenoid - but for 
-                                    // cylinder soilenoid, the pressure may stay high
-//  digitalWrite(SOLENOID_LEFT, HIGH);//release pressure in lines 63-65
-//  delay(DELAY/10);
-//  digitalWrite(SOLENOID_LEFT, LOW);
-}
+
 
 void loop() {
+
 
   //Auto mode
 
