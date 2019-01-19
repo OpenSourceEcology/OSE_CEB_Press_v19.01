@@ -90,18 +90,41 @@ void loop() {
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
   
-
-  
-
-
-
-  //Step 2 Soil Loading/Brick Ejection + Calibration
+  //Step 2 Calibration + Soil Loading/Brick Ejection 
          previousMillis = millis();
   while (lowPressure() == true) {
     digitalWrite(SOLENOID_LEFT, HIGH);
   }
   digitalWrite(SOLENOID_LEFT, LOW);
          drawerExtTime = millis() - previousMillis;
+
+  if (SELECTOR_QUARTER() == true) {          /Selects brick thickness as in http://bit.ly/2RYpQYa
+    digitalWrite(SOLENOID_DOWN, HIGH);
+    delay(drawerExtTime*0.5);
+    digitalWrite(SOLENOID_DOWN, LOW);
+  }
+
+  if (SELECTOR_HALF() == true) {
+     digitalWrite(SOLENOID_DOWN, HIGH);
+     delay(drawerExtTime*0.9);
+     digitalWrite(SOLENOID_DOWN, LOW);
+    }
+
+  if (SELECTOR_3QUARTER() == true) {
+     digitalWrite(SOLENOID_DOWN, HIGH);
+     delay(drawerExtTime*0.9);
+     digitalWrite(SOLENOID_DOWN, LOW);
+    }
+    
+  if (SELECTOR_FULL() == true) {
+       while (lowPressure() == true) {
+    digitalWrite(SOLENOID_DOWN, HIGH);
+  }
+  digitalWrite(SOLENOID_DOWN, LOW);
+    }
+
+
+ 
 
 
   //Step 3 Contract drawer cylinder half way to close compression chamber
@@ -159,7 +182,7 @@ bool lowPressure() {
     return true;
   }
   
-  //reads selector - SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
+  //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
 bool SELECTOR_RESET() {
   if (digitalRead(SELECTOR_RESET) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
