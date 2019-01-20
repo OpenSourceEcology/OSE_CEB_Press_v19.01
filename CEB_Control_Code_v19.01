@@ -52,6 +52,12 @@
 #define DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
 
 bool lowPressure();                     //function to read if pressure sensor is HIGH
+bool resetSelected();                     //
+bool quarterSelected();                     //
+bool halfSelected();                     //
+bool threequarterSelected();                     //
+bool fullSelected();                     //
+
 unsigned long drawerExtTime = 0;        //Time measurement for calibrating motion.
 unsigned long previousMillis = 0;       //time measurement for expansion
 
@@ -69,11 +75,12 @@ void setup() {
   digitalWrite(SOLENOID_UP, LOW);
   pinMode(PRESSURE_SENSOR, INPUT);
   digitalWrite(PRESSURE_SENSOR, INPUT_PULLUP);
+}
 
 void loop() {
 
                                              //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F
-while (SELECTOR_RESET() == true) {
+while (resetSelected() == true) {
   while (lowPressure() == true) {            //Move drawer cylinder right
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
@@ -84,7 +91,7 @@ while (SELECTOR_RESET() == true) {
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
 }
-if (SELECTOR_RESET() == false) {             //Step 1 Calibration + Soil Loading/Brick Ejection 
+if (resetSelected() == false) {             //Step 1 Calibration + Soil Loading/Brick Ejection 
          previousMillis = millis();          //Proceeds only if selector is not on 0 (reset) position
   while (lowPressure() == true) {            //Here we eject brick if this is a repeat cycle.
     digitalWrite(SOLENOID_LEFT, HIGH);
@@ -92,39 +99,39 @@ if (SELECTOR_RESET() == false) {             //Step 1 Calibration + Soil Loading
   digitalWrite(SOLENOID_LEFT, LOW);
          drawerExtTime = millis() - previousMillis;
 }
-  if (SELECTOR_QUARTER() == true) {          //Goes through different selections.
+  if (quarterSelected() == true) {          //Goes through different selections.
     digitalWrite(SOLENOID_DOWN, HIGH);       //Selects brick thickness as in http://bit.ly/2RYpQYa
     delay(drawerExtTime*0.5);                //Thickness multiplier of 0.5 based on cylinder diameters
     digitalWrite(SOLENOID_DOWN, LOW);
   }
 
-  if (SELECTOR_HALF() == true) {
+  if (halfSelected() == true) {
      digitalWrite(SOLENOID_DOWN, HIGH);
      delay(drawerExtTime*0.9);
      digitalWrite(SOLENOID_DOWN, LOW);
     }
 
-  if (SELECTOR_3QUARTER() == true) {
+  if (threequarterSelected() == true) {
      digitalWrite(SOLENOID_DOWN, HIGH);
      delay(drawerExtTime*1.3);
      digitalWrite(SOLENOID_DOWN, LOW);
     }
     
-  if (SELECTOR_FULL() == true) {
+  if (fullSelected() == true) {
        while (lowPressure() == true) {
     digitalWrite(SOLENOID_DOWN, HIGH);
   }
   digitalWrite(SOLENOID_DOWN, LOW);
     }
                                                  //Step 2 Compression Chamber Closure
-if (SELECTOR_RESET() == false) {   
+if (resetSelected() == false) {   
   digitalWrite(SOLENOID_RIGHT, HIGH);
   delay(drawerExtTime*0.75*0.5);           //0.5 is the half-way point of drawer cylinder; 0.75 is the Drawer Multiplier                  
   digitalWrite(SOLENOID_RIGHT, LOW);       //Can modify the 0.5 to fine tune the drawer closure location
 } 
 
                                                  //Step 3 Compression by main cylinder with delay
-if (SELECTOR_RESET() == false) {  
+if (resetSelected() == false) {  
   while (lowPressure() == true) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
@@ -132,7 +139,7 @@ if (SELECTOR_RESET() == false) {
   digitalWrite(SOLENOID_UP, LOW);
 }
                                                  //Step 4 Ejection
-if (SELECTOR_RESET() == false) {  
+if (resetSelected() == false) {  
   while (lowPressure() == true) {
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
@@ -162,10 +169,10 @@ bool lowPressure() {
   }
   else {
     return true;
-  }
+  }}
   
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
-bool SELECTOR_RESET() {
+bool resetSelected() {
   if (digitalRead(SELECTOR_RESET) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(SELECTOR_RESET) == HIGH) {
@@ -177,9 +184,9 @@ bool SELECTOR_RESET() {
   }
   else {
     return true;
-  }
+  }}
   
-  bool SELECTOR_QUARTER() {
+  bool quarterSelected() {
   if (digitalRead(SELECTOR_QUARTER) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(SELECTOR_QUARTER) == HIGH) {
@@ -191,9 +198,9 @@ bool SELECTOR_RESET() {
   }
   else {
     return true;
-  }
+  }}
   
-  bool SELECTOR_HALF() {
+  bool halfSelected() {
   if (digitalRead(SELECTOR_HALF) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(SELECTOR_HALF) == HIGH) {
@@ -205,9 +212,9 @@ bool SELECTOR_RESET() {
   }
   else {
     return true;
-  }
+  }}
   
-  bool SELECTOR_3QUARTER() {
+  bool threequarterSelected() {
   if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
@@ -219,9 +226,9 @@ bool SELECTOR_RESET() {
   }
   else {
     return true;
-  }
+  }}
   
-    bool SELECTOR_FULL() {
+    bool fullSelected() {
   if (digitalRead(SELECTOR_FULL) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(SELECTOR_FULL) == HIGH) {
@@ -233,5 +240,4 @@ bool SELECTOR_RESET() {
   }
   else {
     return true;
-  }
-}
+  }}
