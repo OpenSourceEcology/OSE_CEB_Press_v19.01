@@ -50,7 +50,7 @@
 
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
 #define DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
-                                        //custom function declarations
+                                        //user defined function declarations tell the compiler what type parameters to expect for the function definitions at the bottom
 bool lowPressure();                     //function to read pressure sensor
 bool resetSelected();                     //
 bool quarterSelected();                     //
@@ -90,9 +90,9 @@ while (resetSelected() == true) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
-}
-if (resetSelected() == false) {             //Step 1 Calibration + Soil Loading/Brick Ejection
-         previousMillis = millis();          //Proceeds only if selector is not on 0 (reset) position
+}                                             //Step 1 Calibration + Soil Loading/Brick Ejection
+if (resetSelected() == false) {             //Proceeds only if selector is not on 0 (reset) position
+         previousMillis = millis();          //lowPressure() call adds a slight debounce delay to the millis diffirence
   while (lowPressure() == true) {            //Here we eject brick if this is a repeat cycle.
     digitalWrite(SOLENOID_LEFT, HIGH);
   }
@@ -155,7 +155,7 @@ if (resetSelected() == false) {
 
 
 }                                                //end of loop
-                                                 //custom function definitions
+                                                 //user defined function definitions are code that can be called from almost anywhere (within scope).
                                                  //reads pressure sensor state HIGH is false and LOW is true
 bool lowPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
