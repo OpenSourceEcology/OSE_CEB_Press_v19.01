@@ -64,12 +64,10 @@ unsigned long previousMillis = 0;       //time measurement for expansion
 void setup() {
 
   //initialize pin I/O Inputs and turn everything off to avoid startup glitches
-/*
   pinMode(SELECTOR_QUARTER, INPUT_PULLUP)
   pinMode(SELECTOR_HALF, INPUT_PULLUP)
   pinMode(SELECTOR_3QUARTER, INPUT_PULLUP)
   pinMode(SELECTOR_FULL, INPUT_PULLUP)
-*/
   pinMode(SOLENOID_RIGHT, OUTPUT);
   digitalWrite(SOLENOID_RIGHT, LOW);
   pinMode(SOLENOID_LEFT, OUTPUT);
