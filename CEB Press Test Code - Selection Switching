@@ -88,7 +88,7 @@ void loop() {
          
  
 
-while (fullSelected() == true) {               // happens when 8 is selected
+while (fullSelected() == true) {          // happens when 8 is selected
           
     digitalWrite(SOLENOID_UP, HIGH);
     delay(1000); 
@@ -107,7 +107,7 @@ while (fullSelected() == true) {               // happens when 8 is selected
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(1000);}
 
-  while (lowPressure() == false) {                         // triggers when pressure is high (NO pressure switch closed)
+  while (lowPressure() == false) {                         // triggers when pressure is high
         digitalWrite(SOLENOID_UP, HIGH);
     delay(100); 
     digitalWrite(SOLENOID_UP, LOW);
@@ -146,7 +146,15 @@ while (fullSelected() == true) {               // happens when 8 is selected
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(500);
   }
-  
+
+   if ( threequarterSelected() == false && halfSelected == false && fullSelected == false ) {
+                                                                 //happens when nothing is selected        
+           
+    digitalWrite(SOLENOID_UP, HIGH);
+    delay(500); 
+    digitalWrite(SOLENOID_UP, LOW);
+    delay(500); 
+  }
   
 
 }                                                //end of loop
@@ -156,14 +164,14 @@ bool lowPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(PRESSURE_SENSOR) == HIGH) {
-      return false;                              //Button works like the other selector switches - 
-    }                                            //When connected (high pressure on Normally Open pressure sensor) -
-    else {                                       //result is a low reading.
-      return true;                               //The key is understanding that a high reading means the circuit is open.
-    }                                            //This is due to pinmode input_pullup (high reading on open circuit)
-  }                                              //So that connection is made to ground. This allows one to use no voltages 
-  else {                                         //nor external resistors to detect switch closing/opening.  
-    return true;
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  else {
+    return false;
   }}
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
