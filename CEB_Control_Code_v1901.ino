@@ -174,18 +174,10 @@ bool lowPressure() {
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
 bool resetSelected() {
-  if (digitalRead(SELECTOR_RESET) == HIGH) {
-    delay(PRESSURE_SENSOR_DEBOUNCE);
-    if (digitalRead(SELECTOR_RESET) == HIGH) {
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-  else {
+  if (threequarterSelected() == false && halfSelected == false && fullSelected == false) {
     return true;
   }}
+
 /*
   bool quarterSelected() {
   if (digitalRead(SELECTOR_QUARTER) == HIGH) {
@@ -242,4 +234,3 @@ bool resetSelected() {
   else {
     return true;
   }}
-
