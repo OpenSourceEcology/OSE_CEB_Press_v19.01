@@ -156,14 +156,14 @@ bool lowPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(PRESSURE_SENSOR) == HIGH) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
-  else {
-    return false;
+      return false;                              //Button works like the other selector switches - 
+    }                                            //When connected (high pressure on Normally Open pressure sensor) -
+    else {                                       //result is a low reading.
+      return true;                               //The key is understanding that a high reading means the circuit is open.
+    }                                            //This is due to pinmode input_pullup (high reading on open circuit)
+  }                                              //So that connection is made to ground. This allows one to use no voltages 
+  else {                                         //nor external resistors to detect switch closing/opening.  
+    return true;
   }}
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
