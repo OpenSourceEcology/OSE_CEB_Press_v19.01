@@ -78,9 +78,46 @@ void setup() {
 }
 
 void loop() {
-
                                              //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F
-while (fullSelected() == true) {         
+  while (lowPressure() == false) {            // When pressure is high, rapid cycling occurs
+    digitalWrite(SOLENOID_UP, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_UP, LOW);
+    delay(100);
+    digitalWrite(SOLENOID_DOWN, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_DOWN, LOW);
+    delay(100);
+    digitalWrite(SOLENOID_LEFT, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_LEFT, LOW);
+    delay(100);
+    digitalWrite(SOLENOID_RIGHT, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_RIGHT, LOW);
+    delay(100);
+  }      
+         
+  while (lowPressure() == true) {            // happens during non-selection of anything, but pressure is low - slow cycle
+    digitalWrite(SOLENOID_UP, HIGH);
+    delay(3000); 
+    digitalWrite(SOLENOID_UP, LOW);
+    delay(3000);
+    digitalWrite(SOLENOID_DOWN, HIGH);
+    delay(3000); 
+    digitalWrite(SOLENOID_DOWN, LOW);
+    delay(3000);
+    digitalWrite(SOLENOID_LEFT, HIGH);
+    delay(3000); 
+    digitalWrite(SOLENOID_LEFT, LOW);
+    delay(3000);
+    digitalWrite(SOLENOID_RIGHT, HIGH);
+    delay(3000); 
+    digitalWrite(SOLENOID_RIGHT, LOW);
+    delay(3000);
+  }
+
+while (fullSelected() == true) {          // happens when 8 is selected
   while (lowPressure() == true) {            
     digitalWrite(SOLENOID_UP, HIGH);
     delay(1000); 
@@ -101,7 +138,7 @@ while (fullSelected() == true) {
   }
   }
   
-  while (threequarterSelected() == true) {         
+  while (threequarterSelected() == true) {               //happens when 9 is selected        
   while (lowPressure() == true) {            
     digitalWrite(SOLENOID_UP, HIGH);
     delay(500); 
