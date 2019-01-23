@@ -121,6 +121,7 @@ while (fullSelected() == true) {          // happens when 8 is selected
     delay(100);
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(10);
+     if (lowPressure() == false {digitalWrite(SOLENOID_UP, HIGH; delay(2000);}
   }
 
 
@@ -142,6 +143,8 @@ while (fullSelected() == true) {          // happens when 8 is selected
     delay(500);
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(500);
+   
+    
   }
 
    if ( threequarterSelected() == false && fullSelected == false ) {           //happens when nothing is selected
