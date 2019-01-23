@@ -45,7 +45,7 @@
 #define SELECTOR_RESET 12     //Second 8-pin Dupont housing for the solenoids
                               //Reset is the shutdown/initialization procedure. All procedures are selected by
 #define SELECTOR_HALF 10      //the WHILE function. QUARTER to FULL refers to brick thickness.
-#define SELECTOR_3QUARTER 9   //Secondary cylinder timing is measured only.
+#define SELECTOR_THREEQUARTER 9   //Secondary cylinder timing is measured only.
 #define SELECTOR_FULL 8       //Primary cylinder thickness setting is based on secondary cylinder motion.
 
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
@@ -74,51 +74,22 @@ void setup() {
   pinMode(SOLENOID_UP, OUTPUT);
   digitalWrite(SOLENOID_UP, LOW);
   pinMode(PRESSURE_SENSOR, INPUT);
-  digitalWrite(PRESSURE_SENSOR, INPUT_PULLUP);
+  digitalWrite(SELECTOR_HALF, INPUT_PULLUP);
+    pinMode(SELECTOR_HALF, INPUT);
+  digitalWrite(SELECTOR_HALF, INPUT_PULLUP);
+    pinMode(SELECTOR_THREEQUARTER, INPUT);
+  digitalWrite(SELECTOR_THREEQUARTER, INPUT_PULLUP);
+    pinMode(SELECTOR_FULL, INPUT);
+  digitalWrite(SELECTOR_FULL, INPUT_PULLUP);
 }
 
 void loop() {
-                                             //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F
-  while (lowPressure() == false) {            // When pressure is high, rapid cycling occurs
-    digitalWrite(SOLENOID_UP, HIGH);
-    delay(100); 
-    digitalWrite(SOLENOID_UP, LOW);
-    delay(100);
-    digitalWrite(SOLENOID_DOWN, HIGH);
-    delay(100); 
-    digitalWrite(SOLENOID_DOWN, LOW);
-    delay(100);
-    digitalWrite(SOLENOID_LEFT, HIGH);
-    delay(100); 
-    digitalWrite(SOLENOID_LEFT, LOW);
-    delay(100);
-    digitalWrite(SOLENOID_RIGHT, HIGH);
-    delay(100); 
-    digitalWrite(SOLENOID_RIGHT, LOW);
-    delay(100);
-  }      
+                                             //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F    
          
-  while (lowPressure() == true) {            // happens during non-selection of anything, but pressure is low - slow cycle
-    digitalWrite(SOLENOID_UP, HIGH);
-    delay(3000); 
-    digitalWrite(SOLENOID_UP, LOW);
-    delay(3000);
-    digitalWrite(SOLENOID_DOWN, HIGH);
-    delay(3000); 
-    digitalWrite(SOLENOID_DOWN, LOW);
-    delay(3000);
-    digitalWrite(SOLENOID_LEFT, HIGH);
-    delay(3000); 
-    digitalWrite(SOLENOID_LEFT, LOW);
-    delay(3000);
-    digitalWrite(SOLENOID_RIGHT, HIGH);
-    delay(3000); 
-    digitalWrite(SOLENOID_RIGHT, LOW);
-    delay(3000);
-  }
+ 
 
-while (fullSelected() == true) {          // happens when 8 is selected
-  while (lowPressure() == true) {            
+while (fullSelected() == true) {               // happens when 8 is selected
+          
     digitalWrite(SOLENOID_UP, HIGH);
     delay(1000); 
     digitalWrite(SOLENOID_UP, LOW);
@@ -134,12 +105,30 @@ while (fullSelected() == true) {          // happens when 8 is selected
     digitalWrite(SOLENOID_RIGHT, HIGH);
     delay(1000); 
     digitalWrite(SOLENOID_RIGHT, LOW);
-    delay(1000);
-  }
+    delay(1000);}
+
+  while (lowPressure() == false) {                         // triggers when pressure is high (NO pressure switch closed)
+        digitalWrite(SOLENOID_UP, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_UP, LOW);
+    delay(10);
+    digitalWrite(SOLENOID_DOWN, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_DOWN, LOW);
+    delay(10);
+    digitalWrite(SOLENOID_LEFT, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_LEFT, LOW);
+    delay(10);
+    digitalWrite(SOLENOID_RIGHT, HIGH);
+    delay(100); 
+    digitalWrite(SOLENOID_RIGHT, LOW);
+    delay(10);
   }
   
+  
   while (threequarterSelected() == true) {               //happens when 9 is selected        
-  while (lowPressure() == true) {            
+           
     digitalWrite(SOLENOID_UP, HIGH);
     delay(500); 
     digitalWrite(SOLENOID_UP, LOW);
@@ -157,7 +146,7 @@ while (fullSelected() == true) {          // happens when 8 is selected
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(500);
   }
-  }
+  
   
 
 }                                                //end of loop
@@ -167,14 +156,14 @@ bool lowPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(PRESSURE_SENSOR) == HIGH) {
-      return false;
+      return true;
     }
     else {
-      return true;
+      return false;
     }
   }
   else {
-    return true;
+    return false;
   }}
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
@@ -207,9 +196,9 @@ bool resetSelected() {
   }}
 
   bool threequarterSelected() {
-  if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
+  if (digitalRead(SELECTOR_THREEQUARTER) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
-    if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
+    if (digitalRead(SELECTOR_THREEQUARTER) == HIGH) {
       return false;
     }
     else {
