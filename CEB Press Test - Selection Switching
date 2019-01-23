@@ -65,6 +65,10 @@ void setup() {
 
   //initialize pin I/O Inputs and turn everything off to avoid startup glitches
 
+  pinMode(PRESSURE_SENSOR, INPUT_PULLUP);
+  pinMode(SELECTOR_HALF, INPUT_PULLUP);
+  pinMode(SELECTOR_THREEQUARTER, INPUT_PULLUP);
+  pinMode(SELECTOR_FULL, INPUT_PULLUP);
   pinMode(SOLENOID_RIGHT, OUTPUT);
   digitalWrite(SOLENOID_RIGHT, LOW);
   pinMode(SOLENOID_LEFT, OUTPUT);
@@ -73,88 +77,81 @@ void setup() {
   digitalWrite(SOLENOID_DOWN, LOW);
   pinMode(SOLENOID_UP, OUTPUT);
   digitalWrite(SOLENOID_UP, LOW);
-  pinMode(PRESSURE_SENSOR, INPUT);
-  digitalWrite(SELECTOR_HALF, INPUT_PULLUP);
-    pinMode(SELECTOR_HALF, INPUT);
-  digitalWrite(SELECTOR_HALF, INPUT_PULLUP);
-    pinMode(SELECTOR_THREEQUARTER, INPUT);
-  digitalWrite(SELECTOR_THREEQUARTER, INPUT_PULLUP);
-    pinMode(SELECTOR_FULL, INPUT);
-  digitalWrite(SELECTOR_FULL, INPUT_PULLUP);
+
 }
 
 void loop() {
-                                             //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F    
-         
- 
+                                             //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F
+
+
 
 while (fullSelected() == true) {          // happens when 8 is selected
-          
+
     digitalWrite(SOLENOID_UP, HIGH);
-    delay(1000); 
+    delay(1000);
     digitalWrite(SOLENOID_UP, LOW);
     delay(1000);
     digitalWrite(SOLENOID_DOWN, HIGH);
-    delay(1000); 
+    delay(1000);
     digitalWrite(SOLENOID_DOWN, LOW);
     delay(1000);
     digitalWrite(SOLENOID_LEFT, HIGH);
-    delay(1000); 
+    delay(1000);
     digitalWrite(SOLENOID_LEFT, LOW);
     delay(1000);
     digitalWrite(SOLENOID_RIGHT, HIGH);
-    delay(1000); 
+    delay(1000);
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(1000);}
 
   while (lowPressure() == false) {                         // triggers when pressure is high
         digitalWrite(SOLENOID_UP, HIGH);
-    delay(100); 
+    delay(100);
     digitalWrite(SOLENOID_UP, LOW);
     delay(10);
     digitalWrite(SOLENOID_DOWN, HIGH);
-    delay(100); 
+    delay(100);
     digitalWrite(SOLENOID_DOWN, LOW);
     delay(10);
     digitalWrite(SOLENOID_LEFT, HIGH);
-    delay(100); 
+    delay(100);
     digitalWrite(SOLENOID_LEFT, LOW);
     delay(10);
     digitalWrite(SOLENOID_RIGHT, HIGH);
-    delay(100); 
+    delay(100);
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(10);
   }
-  
-  
-  while (threequarterSelected() == true) {               //happens when 9 is selected        
-           
+
+
+  while (threequarterSelected() == true) {               //happens when 9 is selected
+
     digitalWrite(SOLENOID_UP, HIGH);
-    delay(500); 
+    delay(500);
     digitalWrite(SOLENOID_UP, LOW);
     delay(500);
     digitalWrite(SOLENOID_DOWN, HIGH);
-    delay(500); 
+    delay(500);
     digitalWrite(SOLENOID_DOWN, LOW);
     delay(500);
     digitalWrite(SOLENOID_LEFT, HIGH);
-    delay(500); 
+    delay(500);
     digitalWrite(SOLENOID_LEFT, LOW);
     delay(500);
     digitalWrite(SOLENOID_RIGHT, HIGH);
-    delay(500); 
+    delay(500);
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(500);
   }
 
-   if ( threequarterSelected() == false && fullSelected == false ) {           //happens when nothing is selected 
-                                                                        
+   if ( threequarterSelected() == false && fullSelected == false ) {           //happens when nothing is selected
+
     digitalWrite(SOLENOID_UP, HIGH);
-    delay(500); 
+    delay(500);
     digitalWrite(SOLENOID_UP, LOW);
-    delay(500); 
+    delay(500);
   }
-  
+
 
 }                                                //end of loop
                                                  //custom function definitions
@@ -174,19 +171,13 @@ bool lowPressure() {
   }}
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
-bool resetSelected() {
-  if (digitalRead(SELECTOR_RESET) == HIGH) {
-    delay(PRESSURE_SENSOR_DEBOUNCE);
-    if (digitalRead(SELECTOR_RESET) == HIGH) {
-      return false;
-    }
-    else {
+  bool resetSelected() {
+    if (threequarterSelected() == false && halfSelected() == false && quarterSelected() == false && fullSelected() == false) {
       return true;
     }
-  }
-  else {
-    return true;
-  }}
+    else {
+      return false;
+    }}
 
   bool halfSelected() {
   if (digitalRead(SELECTOR_HALF) == HIGH) {
@@ -229,4 +220,3 @@ bool resetSelected() {
   else {
     return true;
   }}
-
