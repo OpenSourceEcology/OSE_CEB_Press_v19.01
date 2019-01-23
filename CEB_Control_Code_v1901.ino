@@ -42,8 +42,8 @@
 #define SOLENOID_RIGHT 7      //swap these pin numbers for wire inversion
 
 #define PRESSURE_SENSOR 13    //Needs pins adjacent to get 8-pin dupont housing for both selector and sensor
-#define SELECTOR_RESET 12     //Second 8-pin Dupont housing for the solenoids
-//#define SELECTOR_QUARTER 11   //Reset is the shutdown/initialization procedure. All procedures are selected by
+//#define SELECTOR_RESET 12     //Second 8-pin Dupont housing for the solenoids
+#define SELECTOR_QUARTER 11   //Reset is the shutdown/initialization procedure. All procedures are selected by
 #define SELECTOR_HALF 10      //the WHILE function. QUARTER to FULL refers to brick thickness.
 #define SELECTOR_3QUARTER 9   //Secondary cylinder timing is measured only.
 #define SELECTOR_FULL 8       //Primary cylinder thickness setting is based on secondary cylinder motion.
@@ -53,7 +53,7 @@
                                         //custom function declarations
 bool lowPressure();                     //function to read pressure sensor
 bool resetSelected();                     //
-//bool quarterSelected();                     //
+bool quarterSelected();                     //
 bool halfSelected();                     //
 bool threequarterSelected();                     //
 bool fullSelected();                     //
@@ -99,13 +99,12 @@ if (resetSelected() == false) {             //Step 1 Calibration + Soil Loading/
   digitalWrite(SOLENOID_LEFT, LOW);
          drawerExtTime = millis() - previousMillis;
 }
-/*
   if (quarterSelected() == true) {          //Goes through different selections.
     digitalWrite(SOLENOID_DOWN, HIGH);       //Selects brick thickness as in http://bit.ly/2RYpQYa
     delay(drawerExtTime*0.5);                //Thickness multiplier of 0.5 based on cylinder diameters
     digitalWrite(SOLENOID_DOWN, LOW);
   }
-*/
+
   if (halfSelected() == true) {
      digitalWrite(SOLENOID_DOWN, HIGH);
      delay(drawerExtTime*0.9);
@@ -174,11 +173,13 @@ bool lowPressure() {
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
 bool resetSelected() {
-  if (threequarterSelected() == false && halfSelected == false && fullSelected == false) {
+  if (threequarterSelected() == false && halfSelected() == false && quarterSelected() == false && fullSelected() == false) {
     return true;
+  }
+  else {
+    return false;
   }}
 
-/*
   bool quarterSelected() {
   if (digitalRead(SELECTOR_QUARTER) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
@@ -192,7 +193,7 @@ bool resetSelected() {
   else {
     return true;
   }}
-*/
+
   bool halfSelected() {
   if (digitalRead(SELECTOR_HALF) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
