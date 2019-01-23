@@ -102,27 +102,13 @@ while (fullSelected() == true) {          // happens when 8 is selected
     digitalWrite(SOLENOID_RIGHT, HIGH);
     delay(1000);
     digitalWrite(SOLENOID_RIGHT, LOW);
-    delay(1000);}
+    delay(1000);
 
-  while (lowPressure() == false) {                         // triggers when pressure is high
-        digitalWrite(SOLENOID_UP, HIGH);
-    delay(100);
-    digitalWrite(SOLENOID_UP, LOW);
-    delay(10);
-    digitalWrite(SOLENOID_DOWN, HIGH);
-    delay(100);
-    digitalWrite(SOLENOID_DOWN, LOW);
-    delay(10);
-    digitalWrite(SOLENOID_LEFT, HIGH);
-    delay(100);
-    digitalWrite(SOLENOID_LEFT, LOW);
-    delay(10);
-    digitalWrite(SOLENOID_RIGHT, HIGH);
-    delay(100);
-    digitalWrite(SOLENOID_RIGHT, LOW);
-    delay(10);
-     if (lowPressure() == false {digitalWrite(SOLENOID_UP, HIGH; delay(2000);}
-  }
+     if (lowPressure() == false) {
+      digitalWrite(SOLENOID_UP, HIGH); 
+      delay(2000);
+      }
+}
 
 
   while (threequarterSelected() == true) {               //happens when 9 is selected
@@ -175,7 +161,7 @@ bool lowPressure() {
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
   bool resetSelected() {
-    if (threequarterSelected() == false && halfSelected() == false && quarterSelected() == false && fullSelected() == false) {
+    if (threequarterSelected() == false && halfSelected() == false && fullSelected() == false) {
       return true;
     }
     else {
