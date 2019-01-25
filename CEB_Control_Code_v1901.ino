@@ -34,40 +34,39 @@
  Unfamiliar with code structures? See https://www.arduino.cc/en/Reference/HomePage
  */
 
-//defines to make it easier for non-coders to make adjustments for troubleshooting and custom changes
+//Defines are preprocessor directives, which do a text find and replace prior to compilation. They can make it easier to alter data that is likely to need changed.
 
 #define SOLENOID_UP 4         //Extension. See pin mapping above.
 #define SOLENOID_DOWN 5       //swap these pin numbers for wire inversion
 #define SOLENOID_LEFT 6       //Extension.
 #define SOLENOID_RIGHT 7      //swap these pin numbers for wire inversion
-
 #define PRESSURE_SENSOR 13    //Needs pins adjacent to get 8-pin dupont housing for both selector and sensor
 //#define SELECTOR_RESET 12     //Second 8-pin Dupont housing for the solenoids
 #define SELECTOR_QUARTER 11   //Reset is the shutdown/initialization procedure. All procedures are selected by
 #define SELECTOR_HALF 10      //the WHILE function. QUARTER to FULL refers to brick thickness.
 #define SELECTOR_3QUARTER 9   //Secondary cylinder timing is measured only.
 #define SELECTOR_FULL 8       //Primary cylinder thickness setting is based on secondary cylinder motion.
-
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
 #define DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
-                                        //user defined function declarations tell the compiler what type parameters to expect for the function definitions at the bottom
+                    //user defined function declarations tell the compiler what type parameters to expect for the function definitions at the bottom
 bool lowPressure();                     //function to read pressure sensor
-bool resetSelected();                     //
-bool quarterSelected();                     //
-bool halfSelected();                     //
-bool threequarterSelected();                     //
-bool fullSelected();                     //
-                                        //Global variables
+bool resetSelected();                     //checks for selection of position 0 for reset state
+bool quarterSelected();                     // 1/4 brick mode
+bool halfSelected();                     // 1/2 brick mode
+bool threequarterSelected();                     // 3/4 mode
+bool fullSelected();                     // checks for selection switch position for FULL size brick mode
+                    //Global variables
 unsigned long drawerExtTime = 0;        //Time measurement for calibrating motion.
 unsigned long previousMillis = 0;       //time measurement for expansion
 
 void setup() {
 
   //initialize pin I/O Inputs and turn everything off to avoid startup glitches
-  pinMode(SELECTOR_QUARTER, INPUT_PULLUP)
-  pinMode(SELECTOR_HALF, INPUT_PULLUP)
-  pinMode(SELECTOR_3QUARTER, INPUT_PULLUP)
-  pinMode(SELECTOR_FULL, INPUT_PULLUP)
+  //always consider internal pullup resistor states when making wiring changes to prevent damage to the microcontroller pins
+  pinMode(SELECTOR_QUARTER, INPUT_PULLUP);
+  pinMode(SELECTOR_HALF, INPUT_PULLUP);
+  pinMode(SELECTOR_3QUARTER, INPUT_PULLUP);
+  pinMode(SELECTOR_FULL, INPUT_PULLUP);
   pinMode(SOLENOID_RIGHT, OUTPUT);
   digitalWrite(SOLENOID_RIGHT, LOW);
   pinMode(SOLENOID_LEFT, OUTPUT);
