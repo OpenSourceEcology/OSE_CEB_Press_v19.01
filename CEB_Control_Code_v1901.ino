@@ -36,14 +36,14 @@
 
 //Defines are preprocessor directives, which do a text find and replace prior to compilation. They can make it easier to alter data that is likely to need changed.
 
-#define SOLENOID_UP 4         //Extension. See pin mapping above.
-#define SOLENOID_DOWN 5       //swap these pin numbers for wire inversion
-#define SOLENOID_LEFT 6       //Extension.
-#define SOLENOID_RIGHT 7      //swap these pin numbers for wire inversion
+#define SOLENOID_UP 7         //Extension. See pin mapping above.
+#define SOLENOID_DOWN 6       //swap these pin numbers for wire inversion
+#define SOLENOID_LEFT 5       //Extension.
+#define SOLENOID_RIGHT 4      //swap these pin numbers for wire inversion
 #define PRESSURE_SENSOR 13    //Needs pins adjacent to get 8-pin dupont housing for both selector and sensor
-//#define SELECTOR_RESET 12     //Second 8-pin Dupont housing for the solenoids
-#define SELECTOR_QUARTER 11   //Reset is the shutdown/initialization procedure. All procedures are selected by
-#define SELECTOR_HALF 10      //the WHILE function. QUARTER to FULL refers to brick thickness.
+//#define SELECTOR_RESET 12     //Reset is the shutdown/initialization procedure. 
+#define SELECTOR_QUARTER 11   //Reset is the absence of any brick thickness selection.
+#define SELECTOR_HALF 10      // QUARTER to FULL refers to brick thickness.
 #define SELECTOR_3QUARTER 9   //Secondary cylinder timing is measured only.
 #define SELECTOR_FULL 8       //Primary cylinder thickness setting is based on secondary cylinder motion.
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
