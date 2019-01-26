@@ -40,22 +40,26 @@
 #define SOLENOID_DOWN 6       //swap these pin numbers for wire inversion
 #define SOLENOID_LEFT 5       //Extension.
 #define SOLENOID_RIGHT 4      //swap these pin numbers for wire inversion
-#define PRESSURE_SENSOR 13    //Needs pins adjacent to get 8-pin dupont housing for both selector and sensor
-//#define SELECTOR_RESET 12     //Reset is the shutdown/initialization procedure. 
-#define SELECTOR_QUARTER 11   //Reset is the absence of any brick thickness selection.
+                              //THE FOLLOWING PINS WERE SELECTED AS THE MID 6 PINS OF THE UPPER RIGHT 8 PIN HEADER ON RELAY SHIELD
+#define PRESSURE_SENSOR 13    //Needs pins adjacent to get 6-pin dupont housing for both selector and sensor
+#define SELECTOR_FULL 12      //Primary cylinder thickness setting is based on secondary cylinder motion.
+#define SELECTOR_THREEQUARTER 11   //Secondary cylinder timing is measured only.
 #define SELECTOR_HALF 10      // QUARTER to FULL refers to brick thickness.
-#define SELECTOR_3QUARTER 9   //Secondary cylinder timing is measured only.
-#define SELECTOR_FULL 8       //Primary cylinder thickness setting is based on secondary cylinder motion.
+#define SELECTOR_QUARTER 9    //Reset is the absence of any brick thickness selection.
+                              //Reset is the shutdown/initialization procedure. It's selected by non-selection.
+                              
+
+
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
 #define DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
-                    //user defined function declarations tell the compiler what type parameters to expect for the function definitions at the bottom
+            //user defined function declarations tell compiler what type parameters to expect for function definitions
 bool lowPressure();                     //function to read pressure sensor
-bool resetSelected();                     //checks for selection of position 0 for reset state
-bool quarterSelected();                     // 1/4 brick mode
-bool halfSelected();                     // 1/2 brick mode
-bool threequarterSelected();                     // 3/4 mode
-bool fullSelected();                     // checks for selection switch position for FULL size brick mode
-                    //Global variables
+bool resetSelected();                   //checks for selection of position 0 for reset state
+bool quarterSelected();                 // 1/4 brick mode
+bool halfSelected();                    // 1/2 brick mode
+bool threequarterSelected();            // 3/4 mode
+bool fullSelected();                    // checks for selection switch position for FULL size brick mode
+            //Global variables
 unsigned long drawerExtTime = 0;        //Time measurement for calibrating motion.
 unsigned long previousMillis = 0;       //time measurement for expansion
 
@@ -80,9 +84,11 @@ void setup() {
 }
 
 void loop() {
-
+ //*****************************************************************************************************************
+                                             //Reset should be done at end of pressing. If state of machine is correct, 
+                                             //no need to select reset at beginning. Turn the machine on and select 1-4.
                                              //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F
-while (resetSelected() == true) {
+while (resetSelected() == true) {            
   while (lowPressure() == true) {            //Move drawer cylinder right
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
@@ -92,8 +98,10 @@ while (resetSelected() == true) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
-}                                             //Step 1 Calibration + Soil Loading/Brick Ejection
-if (resetSelected() == false) {             //Proceeds only if selector is not on 0 (reset) position
+}    
+ //***********************************************************************************************************
+                                             //Step 1 Calibration + Soil Loading/Brick Ejection
+if (resetSelected() == false) {              //Proceeds only if selector is not on 0 (reset) position
          previousMillis = millis();          //lowPressure() call adds a slight debounce delay to the millis diffirence
   while (lowPressure() == true) {            //Here we eject brick if this is a repeat cycle.
     digitalWrite(SOLENOID_LEFT, HIGH);
@@ -101,6 +109,7 @@ if (resetSelected() == false) {             //Proceeds only if selector is not o
   digitalWrite(SOLENOID_LEFT, LOW);
          drawerExtTime = millis() - previousMillis;
 }
+
   if (quarterSelected() == true) {          //Goes through different selections.
     digitalWrite(SOLENOID_DOWN, HIGH);       //Selects brick thickness as in http://bit.ly/2RYpQYa
     delay(drawerExtTime*0.5);                //Thickness multiplier of 0.5 based on cylinder diameters
