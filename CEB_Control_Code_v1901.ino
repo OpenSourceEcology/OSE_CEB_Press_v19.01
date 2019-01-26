@@ -175,7 +175,7 @@ bool lowPressure() {
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
 bool resetSelected() {
-  if (threequarterSelected() == false && halfSelected() == false && quarterSelected() == false && fullSelected() == false) {
+  if (fullSelected() == false &&threequarterSelected() == false && halfSelected() == false && quarterSelected() == false && quarterSelected() == false) {
     return true;
   }
   else {
