@@ -51,6 +51,7 @@
 
 
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
+#define TURNOFF_DELAY 50                //Addresses 40 ms turnoff time of solenoid. Loses 1 second every minute.
 #define DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
             //user defined function declarations tell compiler what type parameters to expect for function definitions
 bool lowPressure();                     //function to read pressure sensor
@@ -93,11 +94,12 @@ while (resetSelected() == true) {
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
-
+               delay(TURNOFF_DELAY);         //***************************************************************
   while (lowPressure() == true) {            //Move main cylinder up
     digitalWrite(SOLENOID_UP, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
+                delay(10000);                 //After reset - repeat every 10 seconds
 }    
  //***********************************************************************************************************
                                              //Step 1 Calibration + Soil Loading/Brick Ejection
@@ -108,6 +110,7 @@ if (resetSelected() == false) {              //Proceeds only if selector is not 
   }
   digitalWrite(SOLENOID_LEFT, LOW);
          drawerExtTime = millis() - previousMillis;
+              delay(TURNOFF_DELAY);         //***************************************************************
 }
 
   if (quarterSelected() == true) {          //Goes through different selections.
