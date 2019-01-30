@@ -52,7 +52,7 @@
 
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
 #define TURNOFF_DELAY 50                //Addresses 40 ms turnoff time of solenoid. Loses 1 second every minute.
-#define DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
+#define PRESS_DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
             //user defined function declarations tell compiler what type parameters to expect for function definitions
 bool lowPressure();                     //function to read pressure sensor
 bool resetSelected();                   //checks for selection of position 0 for reset state
@@ -149,7 +149,7 @@ if (resetSelected() == false) {
   while (lowPressure() == true) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
-  delay(DELAY);
+  delay(PRESS_DELAY);
   digitalWrite(SOLENOID_UP, LOW);
 }
                                                  //Step 4 Ejection
