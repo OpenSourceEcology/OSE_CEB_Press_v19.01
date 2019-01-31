@@ -51,7 +51,7 @@
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
 #define DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
                                         //custom function declarations
-bool lowPressure();                     //function to read pressure sensor
+bool checkPressure();                     //function to read pressure sensor
 bool resetSelected();                   //
 //bool quarterSelected();               //
 bool halfSelected();                    //
@@ -104,8 +104,8 @@ while (fullSelected() == true) {          // happens when 8 is selected
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(1000);
 
-     if (lowPressure() == false) {
-      digitalWrite(SOLENOID_UP, HIGH); 
+     if (checkPressure() == false) {
+      digitalWrite(SOLENOID_UP, HIGH);
       delay(2000);
       }
 }
@@ -129,8 +129,8 @@ while (fullSelected() == true) {          // happens when 8 is selected
     delay(500);
     digitalWrite(SOLENOID_RIGHT, LOW);
     delay(500);
-   
-    
+
+
   }
 
    if ( threequarterSelected() == false && fullSelected == false ) {           //happens when nothing is selected
@@ -145,7 +145,7 @@ while (fullSelected() == true) {          // happens when 8 is selected
 }                                                //end of loop
                                                  //custom function definitions
                                                  //reads pressure sensor state HIGH is false and LOW is true
-bool lowPressure() {
+bool checkPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(PRESSURE_SENSOR) == HIGH) {
