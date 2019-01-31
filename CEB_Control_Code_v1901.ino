@@ -55,6 +55,7 @@
 #define PRESS_DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
             //user defined function declarations tell compiler what type parameters to expect for function definitions
 bool checkPressure();                     //function to read pressure sensor
+//bool checkPressure( bool previousState );
 bool resetSelected();                   //checks for selection of position 0 for reset state
 bool quarterSelected();                 // 1/4 brick mode
 bool halfSelected();                    // 1/2 brick mode
@@ -70,7 +71,7 @@ void setup() {
   //always consider internal pullup resistor states when making wiring changes to prevent damage to the microcontroller pins
   pinMode(SELECTOR_QUARTER, INPUT_PULLUP);
   pinMode(SELECTOR_HALF, INPUT_PULLUP);
-  pinMode(SELECTOR_3QUARTER, INPUT_PULLUP);
+  pinMode(SELECTOR_THREEQUARTER, INPUT_PULLUP);
   pinMode(SELECTOR_FULL, INPUT_PULLUP);
   pinMode(SOLENOID_RIGHT, OUTPUT);
   digitalWrite(SOLENOID_RIGHT, LOW);
@@ -172,12 +173,22 @@ if (resetSelected() == false) {
                                                  //user defined function definitions are code that can be called from almost anywhere (within scope).
                                                  //reads pressure sensor state HIGH is true and LOW is false
 bool checkPressure() {
-  if (digitalRead(PRESSURE_SENSOR) == HIGH) {
+//bool checkPressure( bool previousState ) {
+  bool readState = digitalRead(PRESSURE_SENSOR);
+  //bool previousState;
+  //bool stateChange = false;
+/*
+  if (readState == stateChange) {
+  previousState = readState;
+}
+*/
+  if (readState == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
-    if (digitalRead(PRESSURE_SENSOR) == HIGH) {
+    if (readState == HIGH) {
       return true;
     }
     else {
+      //checkPressure( previousState );
       checkPressure();
     }
   }
@@ -185,7 +196,7 @@ bool checkPressure() {
     return false;
   }}
 
-  //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
+  //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_THREEQUARTER, SELECTOR_FULL,
 bool resetSelected() {
   if (fullSelected() == false &&threequarterSelected() == false && halfSelected() == false && quarterSelected() == false && quarterSelected() == false) {
     return true;
@@ -223,9 +234,9 @@ bool resetSelected() {
   }}
 
   bool threequarterSelected() {
-  if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
+  if (digitalRead(SELECTOR_THREEQUARTER) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
-    if (digitalRead(SELECTOR_3QUARTER) == HIGH) {
+    if (digitalRead(SELECTOR_THREEQUARTER) == HIGH) {
       return false;
     }
     else {
