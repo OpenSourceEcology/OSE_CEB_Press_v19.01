@@ -90,12 +90,12 @@ void loop() {
                                              //no need to select reset at beginning. Turn the machine on and select 1-4.
                                              //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F
 while (resetSelected() == true) {
-  while (checkPressure() == true) {            //Move drawer cylinder right
+  while (checkPressure() == false) {            //Move drawer cylinder right
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
                delay(TURNOFF_DELAY);         //***************************************************************
-  while (checkPressure() == true) {            //Move main cylinder up
+  while (checkPressure() == false) {            //Move main cylinder up
     digitalWrite(SOLENOID_UP, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
@@ -105,7 +105,7 @@ while (resetSelected() == true) {
                                              //Step 1 Calibration + Soil Loading/Brick Ejection
 if (resetSelected() == false) {              //Proceeds only if selector is not on 0 (reset) position
          previousMillis = millis();          //checkPressure() call adds a slight debounce delay to the millis diffirence
-  while (checkPressure() == true) {            //Here we eject brick if this is a repeat cycle.
+  while (checkPressure() == false) {            //Here we eject brick if this is a repeat cycle.
     digitalWrite(SOLENOID_LEFT, HIGH);
   }
   digitalWrite(SOLENOID_LEFT, LOW);
@@ -132,7 +132,7 @@ if (resetSelected() == false) {              //Proceeds only if selector is not 
     }
 
   if (fullSelected() == true) {
-       while (checkPressure() == true) {
+       while (checkPressure() == false) {
     digitalWrite(SOLENOID_DOWN, HIGH);
   }
   digitalWrite(SOLENOID_DOWN, LOW);
@@ -146,7 +146,7 @@ if (resetSelected() == false) {
 
                                                  //Step 3 Compression by main cylinder with delay
 if (resetSelected() == false) {
-  while (checkPressure() == true) {
+  while (checkPressure() == false) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
   delay(PRESS_DELAY);
@@ -154,12 +154,12 @@ if (resetSelected() == false) {
 }
                                                  //Step 4 Ejection
 if (resetSelected() == false) {
-  while (checkPressure() == true) {
+  while (checkPressure() == false) {
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
 
-  while (checkPressure() == true) {
+  while (checkPressure() == false) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
   digitalWrite(SOLENOID_UP, LOW);
@@ -170,19 +170,19 @@ if (resetSelected() == false) {
 
 }                                                //end of loop
                                                  //user defined function definitions are code that can be called from almost anywhere (within scope).
-                                                 //reads pressure sensor state HIGH is false and LOW is true
+                                                 //reads pressure sensor state HIGH is true and LOW is false
 bool checkPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(PRESSURE_SENSOR) == HIGH) {
-      return false;
+      return true;
     }
     else {
-      return true;
+      checkPressure();
     }
   }
   else {
-    return true;
+    return false;
   }}
 
   //reads selector  - HIGH is false, LOW is true- SELECTOR_RESET, SELECTOR_QUARTER, SELECTOR_HALF, SELECTOR_3QUARTERS, SELECTOR_FULL,
