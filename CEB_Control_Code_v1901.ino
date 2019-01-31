@@ -47,14 +47,14 @@
 #define SELECTOR_HALF 10      // QUARTER to FULL refers to brick thickness.
 #define SELECTOR_QUARTER 9    //Reset is the absence of any brick thickness selection.
                               //Reset is the shutdown/initialization procedure. It's selected by non-selection.
-                              
+
 
 
 #define PRESSURE_SENSOR_DEBOUNCE 20     //milliseconds to delay for pressure sensor debounce
 #define TURNOFF_DELAY 50                //Addresses 40 ms turnoff time of solenoid. Loses 1 second every minute.
 #define PRESS_DELAY 500                       // 1/2 sec extra to compress brick via main Cyl (default 500ms)
             //user defined function declarations tell compiler what type parameters to expect for function definitions
-bool lowPressure();                     //function to read pressure sensor
+bool checkPressure();                     //function to read pressure sensor
 bool resetSelected();                   //checks for selection of position 0 for reset state
 bool quarterSelected();                 // 1/4 brick mode
 bool halfSelected();                    // 1/2 brick mode
@@ -86,26 +86,26 @@ void setup() {
 
 void loop() {
  //*****************************************************************************************************************
-                                             //Reset should be done at end of pressing. If state of machine is correct, 
+                                             //Reset should be done at end of pressing. If state of machine is correct,
                                              //no need to select reset at beginning. Turn the machine on and select 1-4.
                                              //Step 0 Reset/Initialize - Brick pressing sequence - http://bit.ly/2Hnuk6F
-while (resetSelected() == true) {            
-  while (lowPressure() == true) {            //Move drawer cylinder right
+while (resetSelected() == true) {
+  while (checkPressure() == true) {            //Move drawer cylinder right
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
                delay(TURNOFF_DELAY);         //***************************************************************
-  while (lowPressure() == true) {            //Move main cylinder up
+  while (checkPressure() == true) {            //Move main cylinder up
     digitalWrite(SOLENOID_UP, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
                 delay(10000);                 //After reset - repeat every 10 seconds
-}    
+}
  //***********************************************************************************************************
                                              //Step 1 Calibration + Soil Loading/Brick Ejection
 if (resetSelected() == false) {              //Proceeds only if selector is not on 0 (reset) position
-         previousMillis = millis();          //lowPressure() call adds a slight debounce delay to the millis diffirence
-  while (lowPressure() == true) {            //Here we eject brick if this is a repeat cycle.
+         previousMillis = millis();          //checkPressure() call adds a slight debounce delay to the millis diffirence
+  while (checkPressure() == true) {            //Here we eject brick if this is a repeat cycle.
     digitalWrite(SOLENOID_LEFT, HIGH);
   }
   digitalWrite(SOLENOID_LEFT, LOW);
@@ -132,7 +132,7 @@ if (resetSelected() == false) {              //Proceeds only if selector is not 
     }
 
   if (fullSelected() == true) {
-       while (lowPressure() == true) {
+       while (checkPressure() == true) {
     digitalWrite(SOLENOID_DOWN, HIGH);
   }
   digitalWrite(SOLENOID_DOWN, LOW);
@@ -146,7 +146,7 @@ if (resetSelected() == false) {
 
                                                  //Step 3 Compression by main cylinder with delay
 if (resetSelected() == false) {
-  while (lowPressure() == true) {
+  while (checkPressure() == true) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
   delay(PRESS_DELAY);
@@ -154,12 +154,12 @@ if (resetSelected() == false) {
 }
                                                  //Step 4 Ejection
 if (resetSelected() == false) {
-  while (lowPressure() == true) {
+  while (checkPressure() == true) {
     digitalWrite(SOLENOID_RIGHT, HIGH);
   }
   digitalWrite(SOLENOID_RIGHT, LOW);
 
-  while (lowPressure() == true) {
+  while (checkPressure() == true) {
     digitalWrite(SOLENOID_UP, HIGH);
   }
   digitalWrite(SOLENOID_UP, LOW);
@@ -171,7 +171,7 @@ if (resetSelected() == false) {
 }                                                //end of loop
                                                  //user defined function definitions are code that can be called from almost anywhere (within scope).
                                                  //reads pressure sensor state HIGH is false and LOW is true
-bool lowPressure() {
+bool checkPressure() {
   if (digitalRead(PRESSURE_SENSOR) == HIGH) {
     delay(PRESSURE_SENSOR_DEBOUNCE);
     if (digitalRead(PRESSURE_SENSOR) == HIGH) {
